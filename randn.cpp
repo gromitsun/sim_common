@@ -24,3 +24,7 @@ void gauss(T * arr, unsigned int n, T mean, T sigma)
     for (unsigned int i=0; i < n; i++)
         arr[i] = normdist(gen);
 }
+
+
+template void gauss<float>(float * arr, unsigned int n, float mean, float sigma);
+template void gauss<double>(double * arr, unsigned int n, double mean, double sigma);
