@@ -71,7 +71,11 @@ public:
     {
         size_t offset[3]={0,0,0};
         size_t size[3]={x,y,z};
+#ifdef __USE_CL_BUFFER__
+        clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL);
+#else
         clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL);
+#endif
         return CL_SUCCESS;
     }
     
@@ -80,7 +84,11 @@ public:
     {
         size_t offset[3]={0,0,0};
         size_t size[3]={x,y,z};
+#ifdef __USE_CL_BUFFER__
+        clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL);
+#else
         clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL);
+#endif
         return CL_SUCCESS;
     };
     
