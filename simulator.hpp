@@ -12,6 +12,10 @@
 #include <iostream>
 #include "cl_common.hpp"
 
+
+// Uncomment the following line if using OpenCL Buffer objects instead of Image objects
+//#define __USE_CL_BUFFER__
+
 typedef struct
 {
     unsigned int x;
@@ -69,11 +73,14 @@ public:
     // write array from host to device
     cl_int WriteArray(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z=1)
     {
-        size_t offset[3]={0,0,0};
-        size_t size[3]={x,y,z};
+        
 #ifdef __USE_CL_BUFFER__
+        size_t offset=0;
+        size_t size=x*y*z;
         clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL);
 #else
+        size_t offset[3]={0,0,0};
+        size_t size[3]={x,y,z};
         clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL);
 #endif
         return CL_SUCCESS;
@@ -82,11 +89,13 @@ public:
     // read array from device to host
     cl_int ReadArray(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
     {
-        size_t offset[3]={0,0,0};
-        size_t size[3]={x,y,z};
 #ifdef __USE_CL_BUFFER__
+        size_t offset=0;
+        size_t size=x*y*z;
         clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL);
 #else
+        size_t offset[3]={0,0,0};
+        size_t size[3]={x,y,z};
         clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL);
 #endif
         return CL_SUCCESS;
