@@ -77,11 +77,11 @@ public:
 #ifdef __USE_CL_BUFFER__
         size_t offset=0;
         size_t size=x*y*z*sizeof(T);
-        clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL);
+        CHECK_ERROR(clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL));
 #else
         size_t offset[3]={0,0,0};
         size_t size[3]={x,y,z};
-        clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL);
+        CHECK_ERROR(clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL));
 #endif
         return CL_SUCCESS;
     }
@@ -92,11 +92,11 @@ public:
 #ifdef __USE_CL_BUFFER__
         size_t offset=0;
         size_t size=x*y*z*sizeof(T);
-        clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL);
+        CHECK_ERROR(clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL));
 #else
         size_t offset[3]={0,0,0};
         size_t size[3]={x,y,z};
-        clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL);
+        CHECK_ERROR(clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL));
 #endif
         return CL_SUCCESS;
     };
