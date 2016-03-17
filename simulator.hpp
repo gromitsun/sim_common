@@ -75,14 +75,28 @@ public:
     {
         
 #ifdef __USE_CL_BUFFER__
+        WriteArrayToBuffer(image, orig, x, y, z);
+#else
+        WriteArrayToImage(image, orig, x, y, z);
+#endif
+        return CL_SUCCESS;
+    }
+    
+    // Buffer type
+    cl_int WriteArrayToBuffer(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z=1)
+    {
         size_t offset=0;
         size_t size=x*y*z*sizeof(T);
         CHECK_ERROR(clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL));
-#else
+        return CL_SUCCESS;
+    }
+    
+    // Image type
+    cl_int WriteArrayToImage(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z=1)
+    {
         size_t offset[3]={0,0,0};
         size_t size[3]={x,y,z};
         CHECK_ERROR(clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL));
-#endif
         return CL_SUCCESS;
     }
     
@@ -90,16 +104,31 @@ public:
     cl_int ReadArray(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
     {
 #ifdef __USE_CL_BUFFER__
-        size_t offset=0;
-        size_t size=x*y*z*sizeof(T);
-        CHECK_ERROR(clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL));
+        ReadArrayFromBuffer(image, dest, x, y, z);
 #else
-        size_t offset[3]={0,0,0};
-        size_t size[3]={x,y,z};
-        CHECK_ERROR(clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL));
+        ReadArrayFromImage(image, dest, x, y, z);
 #endif
         return CL_SUCCESS;
     };
+    
+    // Buffer type
+    cl_int ReadArrayFromBuffer(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
+    {
+        size_t offset=0;
+        size_t size=x*y*z*sizeof(T);
+        CHECK_ERROR(clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL));
+        return CL_SUCCESS;
+    };
+
+    // Image type
+    cl_int ReadArrayFromImage(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
+    {
+        size_t offset[3]={0,0,0};
+        size_t size[3]={x,y,z};
+        CHECK_ERROR(clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL));
+        return CL_SUCCESS;
+    };
+
     
     // simulation
     virtual void init_sim() {};
