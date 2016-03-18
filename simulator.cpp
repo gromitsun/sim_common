@@ -10,6 +10,8 @@
 #include "util.hpp"
 
 
+/* initializers */
+
 template <typename T>
 Simulator<T>::Simulator(const unsigned int nx,
                         const unsigned int ny,
@@ -56,6 +58,54 @@ Simulator<T>::~Simulator()
 }
 
 
+/* data transfer between host and device */
+
+// write array from host to device
+
+// Buffer type
+template <typename T>
+cl_int Simulator<T>::WriteArrayToBuffer(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z)
+{
+    size_t offset=0;
+    size_t size=x*y*z*sizeof(T);
+    CHECK_ERROR(clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL));
+    return CL_SUCCESS;
+}
+
+// Image type
+template <typename T>
+cl_int Simulator<T>::WriteArrayToImage(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z)
+{
+    size_t offset[3]={0,0,0};
+    size_t size[3]={x,y,z};
+    CHECK_ERROR(clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL));
+    return CL_SUCCESS;
+}
+
+// read array from device to host
+
+// Buffer type
+template <typename T>
+cl_int Simulator<T>::ReadArrayFromBuffer(const cl_mem & image, T* dest, size_t x, size_t y, size_t z)
+{
+    size_t offset=0;
+    size_t size=x*y*z*sizeof(T);
+    CHECK_ERROR(clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL));
+    return CL_SUCCESS;
+};
+
+// Image type
+template <typename T>
+cl_int Simulator<T>::ReadArrayFromImage(const cl_mem & image, T* dest, size_t x, size_t y, size_t z)
+{
+    size_t offset[3]={0,0,0};
+    size_t size[3]={x,y,z};
+    CHECK_ERROR(clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL));
+    return CL_SUCCESS;
+};
+
+
+/* initialize OpenCL */
 
 template <typename T>
 cl_int Simulator<T>::init_cl(const cl_context & context_, const cl_device_id & device_, const cl_command_queue & queue_)
@@ -93,6 +143,9 @@ cl_int Simulator<T>::init_cl(const cl_device_type & device_type, const unsigned 
 }
 
 
+
+/* simulation steps */
+
 template <typename T>
 void Simulator<T>::step(T dt)
 {
@@ -109,13 +162,18 @@ void Simulator<T>::steps(const T dt, const unsigned int nsteps, const bool finis
 }
 
 
+/* write output file */
+
 template <typename T>
-void Simulator<T>:: writefile(const std::string & filename)
+void Simulator<T>:: writefile(const std::string & filename, const T * data)
 {
+    if (data == NULL)
+        data = _data;
+    
     if (filename=="")
-        write2bin(time2fname("out_", current_step), _data, _size);
+        write2bin(time2fname("out_", current_step), data, _size);
     else
-        write2bin(filename, _data, _size);
+        write2bin(filename, data, _size);
 }
 
 
