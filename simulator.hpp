@@ -83,25 +83,13 @@ public:
     }
     
     // Buffer type
-    cl_int WriteArrayToBuffer(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z=1)
-    {
-        size_t offset=0;
-        size_t size=x*y*z*sizeof(T);
-        CHECK_ERROR(clEnqueueWriteBuffer(_queue, image, true, offset, size, orig, 0, NULL, NULL));
-        return CL_SUCCESS;
-    }
+    cl_int WriteArrayToBuffer(const cl_mem & image, const T* orig, size_t x, size_t y=1, size_t z=1);
     
     // Image type
-    cl_int WriteArrayToImage(const cl_mem & image, const T* orig, size_t x, size_t y, size_t z=1)
-    {
-        size_t offset[3]={0,0,0};
-        size_t size[3]={x,y,z};
-        CHECK_ERROR(clEnqueueWriteImage(_queue, image, true, offset, size, 0, 0, orig, 0, NULL, NULL));
-        return CL_SUCCESS;
-    }
+    cl_int WriteArrayToImage(const cl_mem & image, const T* orig, size_t x, size_t y=1, size_t z=1);
     
     // read array from device to host
-    cl_int ReadArray(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
+    cl_int ReadArray(const cl_mem & image, T* dest, size_t x, size_t y=1, size_t z=1)
     {
 #ifdef __USE_CL_BUFFER__
         ReadArrayFromBuffer(image, dest, x, y, z);
@@ -112,22 +100,10 @@ public:
     };
     
     // Buffer type
-    cl_int ReadArrayFromBuffer(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
-    {
-        size_t offset=0;
-        size_t size=x*y*z*sizeof(T);
-        CHECK_ERROR(clEnqueueReadBuffer(_queue, image, true, offset, size, dest, 0, NULL, NULL));
-        return CL_SUCCESS;
-    };
+    cl_int ReadArrayFromBuffer(const cl_mem & image, T* dest, size_t x, size_t y=1, size_t z=1);
 
     // Image type
-    cl_int ReadArrayFromImage(const cl_mem & image, T* dest, size_t x, size_t y, size_t z=1)
-    {
-        size_t offset[3]={0,0,0};
-        size_t size[3]={x,y,z};
-        CHECK_ERROR(clEnqueueReadImage(_queue, image, true, offset, size, 0, 0, dest, 0, NULL, NULL));
-        return CL_SUCCESS;
-    };
+    cl_int ReadArrayFromImage(const cl_mem & image, T* dest, size_t x, size_t y=1, size_t z=1);
 
     
     // simulation
@@ -136,7 +112,7 @@ public:
     virtual void steps(const T dt,const unsigned int nsteps,const bool finish=true, const bool cputime=true);
     
     // output
-    virtual void writefile(const std::string & filename="");
+    virtual void writefile(const std::string & filename="", const T * data=NULL);
     
 };
 
