@@ -37,7 +37,7 @@ protected:
     
     T * _data;
     unsigned int _current_step;
-    unsigned int _time;
+    T _time;
     
     bool _cl_initialized;
     bool _sim_initialized;
@@ -51,7 +51,7 @@ public:
     // Simulation
 //    const T * const data;
     const unsigned int & current_step;
-    const unsigned int & time;
+    const T & time;
     
     /* Constructors & destructors */
     Simulator(const unsigned int nx,
@@ -110,7 +110,8 @@ public:
     virtual void init_sim() {};
     virtual void step(const T dt);
     virtual void steps(const T dt,const unsigned int nsteps,const bool finish=true, const bool cputime=true);
-    
+    virtual void restart(const unsigned int t, const T current_time); // restart from #t steps; reset step counter to t
+
     // output
     virtual void writefile(const std::string & filename="", const T * data=NULL);
     

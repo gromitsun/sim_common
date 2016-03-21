@@ -17,7 +17,7 @@ Simulator<T>::Simulator(const unsigned int nx,
                         const unsigned int ny,
                         const unsigned int nz,
                         const unsigned int ndim) : context(_context), device(_device), queue(_queue),
-                                                   current_step(_current_step), time(_time), _data(NULL)
+                                                   current_step(_current_step), time(_time)
 
 {
     _dim = {nx, ny, nz};
@@ -31,7 +31,7 @@ Simulator<T>::Simulator(const unsigned int nx,
 template <typename T>
 Simulator<T>::Simulator(const Dim3 dim,
                         const unsigned int ndim) : context(_context), device(_device), queue(_queue),
-                                                   current_step(_current_step), time(_time), _data(NULL)
+                                                   current_step(_current_step), time(_time)
 {
     _dim = dim;
     _ndim = ndim;
@@ -117,7 +117,7 @@ cl_int Simulator<T>::init_cl(const cl_context & context_, const cl_device_id & d
     if (queue_==NULL)
     {
         cl_int err;
-        CHECK_RETURN_N(_queue, clCreateCommandQueue(context_, device_, 0, &err), err);
+        CHECK_RETURN(_queue, clCreateCommandQueue(context_, device_, 0, &err), err);
     }
     else {_queue=queue_;}
     return CL_SUCCESS;
@@ -127,8 +127,8 @@ template <typename T>
 cl_int Simulator<T>::init_cl()
 {
     cl_int err;
-    CHECK_RETURN_N(_context, CreateContext(err), err);
-    CHECK_RETURN_N(_queue, CreateCommandQueue(_context, &_device, err), err)
+    CHECK_RETURN(_context, CreateContext(err), err);
+    CHECK_RETURN(_queue, CreateCommandQueue(_context, &_device, err), err)
     return CL_SUCCESS;
 }
 
@@ -137,8 +137,8 @@ template <typename T>
 cl_int Simulator<T>::init_cl(const cl_device_type & device_type, const unsigned int & device_num)
 {
     cl_int err;
-    CHECK_RETURN_N(_context, CreateContext(_device, device_type, device_num, err), err);
-    CHECK_RETURN_N(_queue, CreateCommandQueue(_context, &_device, err), err);
+    CHECK_RETURN(_context, CreateContext(_device, device_type, device_num, err), err);
+    CHECK_RETURN(_queue, CreateCommandQueue(_context, &_device, err), err);
     return CL_SUCCESS;
 }
 
@@ -159,6 +159,13 @@ void Simulator<T>::steps(const T dt, const unsigned int nsteps, const bool finis
 {
     _current_step+=nsteps;
     _time+=dt*nsteps;
+}
+
+template <typename T>
+void Simulator<T>::restart(const unsigned int t, const T current_time)
+{
+    _current_step = t;
+    _time = current_time;
 }
 
 
