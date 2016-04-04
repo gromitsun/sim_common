@@ -10,7 +10,7 @@ using std::cout;
 using std::endl;
 
 template <typename Type>
-int write2bin(std::string filename, Type * arr, unsigned int n)
+int write2bin(std::string filename, Type * arr, std::size_t n)
 {
 	std::FILE * pFile;
     pFile = std::fopen(filename.c_str(), "wb");
@@ -55,14 +55,53 @@ std::string time2fname(const std::string & prefix, const unsigned int & t, const
 
 
 /* Explicit instantiation */
-template int write2bin<int>(std::string, int *, unsigned int);
-template int write2bin<float>(std::string, float *, unsigned int);
-template int write2bin<double>(std::string, double *, unsigned int);
+template int write2bin<int>(std::string, int *, std::size_t);
+template int write2bin<float>(std::string, float *, std::size_t);
+template int write2bin<double>(std::string, double *, std::size_t);
 
-template int write2bin<const int>(std::string, const int *, unsigned int);
-template int write2bin<const float>(std::string, const float *, unsigned int);
-template int write2bin<const double>(std::string, const double *, unsigned int);
+template int write2bin<const int>(std::string, const int *, std::size_t);
+template int write2bin<const float>(std::string, const float *, std::size_t);
+template int write2bin<const double>(std::string, const double *, std::size_t);
 
 template int read_from_bin<int>(std::string, int *, std::size_t, long int, int);
 template int read_from_bin<float>(std::string, float *, std::size_t, long int, int);
 template int read_from_bin<double>(std::string, double *, std::size_t, long int, int);
+
+
+
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+int dir_exist(const std::string path, bool verbose)
+{
+    struct stat info;
+
+    if( stat( path.c_str(), &info ) != 0 )
+    {
+        if (verbose)
+            std::cout << "cannot access " << path << std::endl;
+        return -1;
+    }
+    else if( info.st_mode & S_IFDIR )  // S_ISDIR() doesn't exist on my windows 
+    {
+        if (verbose)
+            std::cout << path << " is a directory\n";
+        return 0;
+    }
+    else
+    { 
+        if (verbose)
+            std::cout << path << " is not directory\n";
+        return -2;
+    }
+}
+
+
+int prep_dir(const std::string path)
+{
+    if (dir_exist(path) != 0)
+        return mkdir(path.c_str(), S_IRWXU);
+    else
+        return 0;
+}
