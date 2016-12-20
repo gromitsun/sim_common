@@ -1,6 +1,6 @@
 //
 //  simulator.cpp
-//  AllenCahnFD
+//  sim_common
 //
 //  Created by Yue Sun on 7/20/15.
 //  Copyright (c) 2015 Yue Sun. All rights reserved.

@@ -1,13 +1,13 @@
 //
 //  simulator.h
-//  AllenCahnFD
+//  sim_common
 //
 //  Created by Yue Sun on 7/20/15.
 //  Copyright (c) 2015 Yue Sun. All rights reserved.
 //
 
-#ifndef __AllenCahnFD__simulator__
-#define __AllenCahnFD__simulator__
+#ifndef __SteinbachPhaseFieldFD__simulator__
+#define __SteinbachPhaseFieldFD__simulator__
 
 #include <iostream>
 #include "cl_common.hpp"
@@ -117,4 +117,4 @@ public:
     
 };
 
-#endif /* defined(__AllenCahnFD__simulator__) */
+#endif /* defined(__SteinbachPhaseFieldFD__simulator__) */
